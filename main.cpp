@@ -11,7 +11,7 @@ template<class T>
 void printQueue(const T& queue);
 
 int main() {
-    std::string expr;s
+    std::string expr;
     std::cout << ">";
     std::getline(std::cin, expr);
 
