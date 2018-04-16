@@ -7,6 +7,7 @@
 #include <sstream>
 #include <vector>
 #include <deque>
+#include <tuple>
 #include <math.h>
 #include "Token.h"
 #include "shuntingyard.h"
@@ -53,9 +54,10 @@ std::deque<Token> exprToTokens(const std::string &expr) {
     return tokens;
 }
 
-std::deque<Token> shuntingYard(const std::deque<Token> &tokens) {
+std::tuple<std::deque<Token>, bool> shuntingYard(const std::deque<Token> &tokens) {
     std::deque<Token> queue;
     std::vector<Token> stack;
+    bool error = false;
 
     // While there are tokens to be read:
     for(auto token : tokens) {
@@ -130,15 +132,15 @@ std::deque<Token> shuntingYard(const std::deque<Token> &tokens) {
                     // If the stack runs out without finding a left parenthesis,
                     // then there are mismatched parentheses.
                     printf("RightParen error (%s)\n", token.str.c_str());
-                    exit(0);
+                    error = true;
                 }
             }
                 break;
             case Token::Type::Space:
                 break;
             default:
-                printf("error (%s)\n", token.str.c_str());
-                exit(0);
+                printf("\nThere was an error with your input (%s)\n", token.str.c_str());
+                error = true;
         }
 
 //        debugReport(token, queue, stack);
@@ -151,7 +153,7 @@ std::deque<Token> shuntingYard(const std::deque<Token> &tokens) {
         // then there are mismatched parentheses.
         if(stack.back().type == Token::Type::LeftParen) {
             printf("Mismatched parentheses error\n");
-            exit(0);
+            error = true;
         }
 
         // Pop the operator onto the output queue.
@@ -159,8 +161,8 @@ std::deque<Token> shuntingYard(const std::deque<Token> &tokens) {
         stack.pop_back();
     }
 
-    //Exit.
-    return queue;
+    // return queue and error if there were any
+    return std::make_tuple(queue, error);
 }
 
 std::ostream &operator<<(std::ostream &os, const Token &token) {
