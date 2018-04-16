@@ -19,7 +19,7 @@ std::deque<Token> exprToTokens(const std::string &expr) {
     for(const auto* p = expr.c_str(); *p; ++p) {
         if(isdigit(*p)) {
             const auto* b = p;
-            for(; isdigit(*p); ++p) {
+            for(; isdigit(*p) || *p == '.'; ++p) {
                 ;
             }
             const auto s = std::string(b, p);

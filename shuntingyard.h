@@ -16,7 +16,4 @@ std::deque<Token> exprToTokens(const std::string& expr);
 std::ostream& operator<<(std::ostream& os, const Token& token);
 std::tuple<std::deque<Token>, bool> shuntingYard(const std::deque<Token>& tokens);
 
-
-
-
 #endif //CALCULATOR_SHUNTINGYARD_H
