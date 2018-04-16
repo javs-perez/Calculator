@@ -4,80 +4,57 @@
 #include <vector>
 #include <deque>
 #include <math.h>
-#include "Token.h"
 #include "shuntingyard.h"
+#include "calculator.h"
+#include "CalculatorTests.h"
 
-template<class T>
-void printQueue(const T& queue);
 
 int main() {
     std::string expr;
-    std::cout << ">";
-    std::getline(std::cin, expr);
+    std::string run_tests;
+    std::string go_again = "n";
+    bool error;
 
-    const auto tokens = exprToTokens(expr);
-    auto queue = shuntingYard(tokens);
-    std::vector<float> stack;
+    printf("==================================\n");
+    printf("Welcome to the Calculator Program!\n");
+    printf("==================================\n");
 
-    while(! queue.empty()) {
-        std::string op;
-
-        const auto token = queue.front();
-        queue.pop_front();
-        switch(token.type) {
-            case Token::Type::Number:
-                stack.push_back(std::stoi(token.str));
-                op = "Push " + token.str;
-                break;
-            case Token::Type::Operator: {
-                const auto rhs = stack.back();
-                stack.pop_back();
-                const auto lhs = stack.back();
-                stack.pop_back();
-
-                switch(token.str[0]) {
-                    default:
-                        printf("Operator error [%s]\n", token.str.c_str());
-                        exit(0);
-                    case '^':
-                        stack.push_back(static_cast<float>(pow(lhs, rhs)));
-                        break;
-                    case 'r':
-                        stack.push_back(static_cast<float>(pow(rhs, 1.0/lhs)));
-                        break;
-                    case '*':
-                        stack.push_back(lhs * rhs);
-                        break;
-                    case '/':
-                        stack.push_back(lhs / rhs);
-                        break;
-                    case '+':
-                        stack.push_back(lhs + rhs);
-                        break;
-                    case '-':
-                        stack.push_back(lhs - rhs);
-                        break;
-                }
-                op = "Push " + std::to_string(lhs) + " " + token.str + " " + std::to_string(rhs);
-            }
-            break;
-            default:
-                printf("Token error\n");
-                exit(0);
-        }
+    printf("Would you like to run the tests before calculating? y/n\n");
+    std::getline(std::cin, run_tests);
+    if (run_tests == "y" || run_tests == "Y"){
+        printf("Running calculator tests:\n\n");
+        CalculatorTests::run();
     }
 
-    printf("\n result = %f\n", stack.back());
+    do {
+        printf("\n\nPlease enter the expression you would like to calculate:\n");
+        printf("> ");
+
+        std::getline(std::cin, expr);
+        std::cout << expr;
+
+        const auto tokens = exprToTokens(expr);
+        auto shunting_yard_result = shuntingYard(tokens);
+        auto queue = std::get<0>(shunting_yard_result);
+        error = std::get<1>(shunting_yard_result);
+        if (error == true){
+            printf("There was an error with your expression. Please try again.\n");
+            continue;
+        }
+
+        auto result = calculateResult(queue);
+        auto value = std::get<0>(result);
+        error = std::get<1>(result);
+
+        if (error == false) {
+            printf("\n result = %.2f\n", value);
+            printf("Would you like to calculate a new expression? y/n\n");
+            std::getline(std::cin, go_again);
+        } else {
+            printf("There was an error with your expression. Please try again.\n");
+        }
+    } while(error == true || go_again == "y" || go_again == "Y");
 
     return 0;
 }
 
-template<class T>
-void printQueue(const T &queue) {
-    std::ostringstream ossQueue;
-    for(const auto& t : queue) {
-        ossQueue << " " << t;
-    }
-
-    printf("%s\n", ossQueue.str().c_str());
-}
