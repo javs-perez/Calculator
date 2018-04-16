@@ -75,6 +75,14 @@ int CalculatorTests::testingSquareRoot() {
     return printResults(expr, expected_result, value);
 }
 
+int CalculatorTests::testingFloatingNums() {
+    std::string expr = "12.5 * 2 - (8.4/2)";
+    float expected_result = 20.8;
+    float value = runTest(expr);
+
+    return printResults(expr, expected_result, value);
+};
+
 
 template<class T>
 int printResults(std::string expr, float expected_result, T value) {
@@ -111,6 +119,7 @@ void CalculatorTests::run() {
     failures += CalculatorTests::test5();
     failures += CalculatorTests::testingExponents();
     failures += CalculatorTests::testingSquareRoot();
+    failures += CalculatorTests::testingFloatingNums();
 
     printf("There were %d failures.\n", failures);
     if (failures > 0) {

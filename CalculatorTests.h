@@ -16,6 +16,7 @@ public:
     static int test5();
     static int testingExponents();
     static int testingSquareRoot();
+    static int testingFloatingNums();
     static void run();
 };
 
