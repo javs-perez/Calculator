@@ -9,9 +9,6 @@
 #define CALCULATOR_CALCULATOR_H
 
 
-template<class T>
-void printQueue(const T& queue);
-
 std::tuple<float, bool> calculateResult(std::deque<Token> &queue);
 
 

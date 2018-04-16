@@ -18,14 +18,12 @@ std::tuple<float, bool> calculateResult(std::deque<Token> &queue) {
     bool error = false;
 
     while(! queue.empty()) {
-        std::string op;
 
         const auto token = queue.front();
         queue.pop_front();
         switch (token.type) {
             case Token::Type::Number:
-                stack.push_back(std::stoi(token.str));
-                op = "Push " + token.str;
+                stack.push_back(std::stof(token.str));
                 break;
             case Token::Type::Operator: {
                 const auto rhs = stack.back();
@@ -57,24 +55,12 @@ std::tuple<float, bool> calculateResult(std::deque<Token> &queue) {
                         stack.push_back(lhs - rhs);
                         break;
                 }
-                op = "Push " + std::to_string(lhs) + " " + token.str + " " + std::to_string(rhs);
             }
                 break;
             default:
                 printf("Token error\n");
                 error = true;
         }
-//        printQueue(queue);
     }
     return std::make_tuple(stack.back(), error);
-}
-
-template<class T>
-void printQueue(const T &queue) {
-    std::ostringstream ossQueue;
-    for(const auto& t : queue) {
-        ossQueue << " " << t;
-    }
-
-    printf("%s\n", ossQueue.str().c_str());
 }
